@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+    <h2>Inventory Items (Real-time)</h2>
+    <ul id="inventoryList"></ul>
+
+    <h3>Add Item</h3>
+    <input id="itemName" placeholder="Name">
+    <input id="itemQty" placeholder="Qty" type="number">
+    <input id="itemPrice" placeholder="Price" type="number">
+    <button onclick="addItem()">Add</button>
+
+    <script>
+        let stompClient;
+
+        function connect() {
+            let socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function () {
+                stompClient.subscribe('/topic/inventory', function (itemUpdate) {
+                    const item = JSON.parse(itemUpdate.body);
+                    const li = document.createElement("li");
+                    li.innerText = `${item.name} - Qty: ${item.quantity}, Price: ₹${item.price}`;
+                    document.getElementById("inventoryList").appendChild(li);
+                });
+            });
+        }
+
+        function addItem() {
+            const name = document.getElementById("itemName").value;
+            const quantity = document.getElementById("itemQty").value;
+            const price = document.getElementById("itemPrice").value;
+            fetch("/api/inventory", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, quantity, price })
+            });
+        }
+
+        window.onload = function () {
+            connect();
+            fetch("/api/inventory")
+                .then(res => res.json())
+                .then(items => {
+                    const list = document.getElementById("inventoryList");
+                    items.forEach(item => {
+                        const li = document.createElement("li");
+                        li.innerText = `${item.name} - Qty: ${item.quantity}, Price: ₹${item.price}`;
+                        list.appendChild(li);
+                    });
+                });
+        };
+    </script>
+</body>
+</html>
