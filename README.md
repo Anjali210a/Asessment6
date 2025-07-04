@@ -20,7 +20,7 @@ Displays inventory items and allows adding new items
 
 Key Features Implemented
 ### Real-time Inventory Tracking:
----
+
 WebSocket configuration broadcasts new inventory items to all connected clients
 
 Clients receive updates immediately when items are added
