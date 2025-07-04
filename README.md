@@ -1,6 +1,7 @@
 # Assessment6
 ## System Architecture
-### Backend Components:
+### Backend Components: 
+![image](https://github.com/user-attachments/assets/30e6c5ee-b33e-4263-8ee5-3140f27ba62e)
 
 Spring Boot application with REST API endpoints
 
